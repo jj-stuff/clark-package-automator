@@ -1,0 +1,43 @@
+# .github/workflows/run-automator.yml
+name: Check for Packages
+
+on:
+  # Allows you to run this workflow manually from the Actions tab for testing
+  workflow_dispatch:
+
+  schedule:
+    # Runs 8 times a day at specific times in UTC.
+    # This corresponds to times like 9:00/9:30 AM, 1:00/1:30 PM in New York (EDT, UTC-4).
+    - cron: '0,30 13,17,21,1 * * *'
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Playwright browsers
+        run: playwright install
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Package Automator
+        run: python main.py
+        env:
+          IMAP_SERVER: ${{ secrets.IMAP_SERVER }}
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          # This must be a 16-digit App Password from myaccount.google.com/apppasswords
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+          SENDER_ADDRESS: ${{ secrets.SENDER_ADDRESS }}
+          FORM_URL: ${{ secrets.FORM_URL }}
+          FIRST_NAME: ${{ secrets.FIRST_NAME }}
+          LAST_NAME: ${{ secrets.LAST_NAME }}
+          ROOM_NUMBER: ${{ secrets.ROOM_NUMBER }}
