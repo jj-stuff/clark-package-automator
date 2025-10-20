@@ -42,10 +42,15 @@ jobs:
         env:
           IMAP_SERVER: ${{ secrets.IMAP_SERVER }}
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          # This must be a 16-digit App Password from myaccount.google.com/apppasswords
           EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
           SENDER_ADDRESS: ${{ secrets.SENDER_ADDRESS }}
           FORM_URL: ${{ secrets.FORM_URL }}
           FIRST_NAME: ${{ secrets.FIRST_NAME }}
           LAST_NAME: ${{ secrets.LAST_NAME }}
           ROOM_NUMBER: ${{ secrets.ROOM_NUMBER }}
+
+      - name: Upload submission screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: submission-screenshot
+          path: submission_*.png
