@@ -181,6 +181,7 @@ def submit_package_form(url: str, package_info: dict[str, str], user_info: dict[
 
         # Wait for the submission to finish and capture a screenshot for auditing.
         page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(1000)
         page.screenshot(path=f"submission_{tracking_id}.png")
         browser.close()
 

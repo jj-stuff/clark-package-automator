@@ -7,8 +7,16 @@ on:
 
   schedule:
     # Runs 8 times a day at specific times in UTC.
-    # This corresponds to times like 9:00/9:30 AM, 1:00/1:30 PM in New York (EDT, UTC-4).
-    - cron: '0,30 13,17,21,1 * * *'
+    # This corresponds to 9:15/9:35 AM, 1:01/1:32 PM, 5:06/5:30 PM, and 8:00/8:30 PM
+    # in New York (EDT, UTC-4).
+    - cron: '15 13 * * *'
+    - cron: '35 13 * * *'
+    - cron: '1 17 * * *'
+    - cron: '32 17 * * *'
+    - cron: '6 21 * * *'
+    - cron: '30 21 * * *'
+    - cron: '0 0 * * *'
+    - cron: '30 0 * * *'
 
 jobs:
   run-script:
