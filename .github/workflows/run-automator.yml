@@ -5,18 +5,44 @@ on:
   # Allows you to run this workflow manually from the Actions tab for testing
   workflow_dispatch:
 
+  # Runs 10 times a day at specific UTC times.
+  # These correspond to roughly the following times in New York (EDT, UTC-4):
+  # 9:00 AM, 9:20 AM, 12:45 PM, 1:15 PM, 4:50 PM, 5:15 PM,
+  # 6:45 PM, 7:15 PM, 7:45 PM, and 8:15 PM.
+  #
+  # ⚠️ When daylight saving time ends (EST, UTC-5), these will run 1 hour earlier locally.
+  # Adjust UTC times if you want to keep the same New York clock times.
+
   schedule:
-    # Runs 8 times a day at specific times in UTC.
-    # This corresponds to 9:15/9:35 AM, 1:01/1:32 PM, 5:06/5:30 PM, and 8:00/8:30 PM
-    # in New York (EDT, UTC-4).
-    - cron: '15 13 * * *'
-    - cron: '35 13 * * *'
-    - cron: '1 17 * * *'
-    - cron: '32 17 * * *'
-    - cron: '6 21 * * *'
-    - cron: '30 21 * * *'
-    - cron: '0 0 * * *'
-    - cron: '30 0 * * *'
+    # === Morning runs ===
+    # 9:00 AM EDT — early morning check
+    - cron: '0 13 * * *'
+    # 9:20 AM EDT — backup morning run
+    - cron: '20 13 * * *'
+
+    # === Midday runs ===
+    # 12:45 PM EDT — pre-lunch check
+    - cron: '45 16 * * *'
+    # 1:15 PM EDT — early afternoon run
+    - cron: '15 17 * * *'
+
+    # === Late afternoon runs ===
+    # 4:50 PM EDT — mid-evening data check
+    - cron: '50 20 * * *'
+    # 5:15 PM EDT — buffer follow-up
+    - cron: '15 21 * * *'
+
+    # === Evening runs (added 7 PM slot) ===
+    # 6:45 PM EDT — pre-7 PM early buffer run
+    - cron: '45 22 * * *'
+    # 7:15 PM EDT — 7 PM main run
+    - cron: '15 23 * * *'
+
+    # === Night runs ===
+    # 7:45 PM EDT — late-evening run
+    - cron: '45 23 * * *'
+    # 8:15 PM EDT — final night run
+    - cron: '15 0 * * *'
 
 jobs:
   run-script:
@@ -38,7 +64,10 @@ jobs:
         run: python -m playwright install --with-deps chromium
 
       - name: Run Package Automator
-        run: python main.py
+        run: |
+          echo "UTC time: $(date -u)"
+          echo "Local time: $(date)"
+          python main.py
         env:
           IMAP_SERVER: ${{ secrets.IMAP_SERVER }}
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
